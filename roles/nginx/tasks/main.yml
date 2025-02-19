@@ -1,0 +1,38 @@
+---
+# tasks file for nginx
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Ensure Nginx is running and enabled
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Remove default Nginx configuration symlink
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+  - /etc/nginx/sites-enabled/default
+  - /var/www/html/index.nginx-debian.html
+  notify: Restart_nginx
+
+- name: Create Joomla Nginx configuration
+  ansible.builtin.template:
+    src: joomla.conf.j2
+    dest: /etc/nginx/sites-available/joomla.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Reload_nginx
+
+- name: Create symbolic link for Joomla site
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/joomla.conf
+    dest: /etc/nginx/sites-enabled/joomla.conf
+    state: link
+  notify: Reload_nginx

@@ -1,0 +1,14 @@
+---
+- hosts: all
+  name: Install and configure LEMP stack with Joomla
+  become: true
+  vars_files:
+  - vars/main.yml
+  - vars/vault.yml
+  roles:
+  - common
+  - nginx
+  - php
+  - mysql
+  - initapps
+  - joomla

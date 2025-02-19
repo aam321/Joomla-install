@@ -1,0 +1,20 @@
+---
+- name: Install PHP and necessary modules
+  ansible.builtin.apt:
+    name:
+    - php8.1
+    - php8.1-fpm
+    - php8.1-mysql
+    - php8.1-curl
+    - php8.1-gd
+    - php8.1-mbstring
+    - php8.1-xml
+    - php8.1-zip
+    state: present
+    update_cache: true
+
+- name: Ensure PHP-FPM is running and enabled
+  ansible.builtin.service:
+    name: php8.1-fpm
+    state: started
+    enabled: true

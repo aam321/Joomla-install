@@ -1,0 +1,10 @@
+---
+- name: Common | Install common packages
+  ansible.builtin.apt:
+    name:
+      - curl
+      - software-properties-common
+      - unzip
+      - python3-pymysql
+    state: present
+    update_cache: true

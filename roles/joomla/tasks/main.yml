@@ -1,0 +1,27 @@
+---
+- name: Install unzip
+  ansible.builtin.apt:
+    name: unzip
+    state: present
+
+- name: Download Joomla
+  ansible.builtin.get_url:
+    url: https://downloads.joomla.org/cms/joomla5/5-1-4/Joomla_5-1-4-Stable-Full_Package.zip
+    dest: /tmp/joomla.zip
+    mode: '644'
+
+- name: Extract Joomla
+  ansible.legacy.unarchive:
+    src: /tmp/joomla.zip
+    dest: /var/www/sites/joomla
+    remote_src: true
+    owner: "{{ joomla_www_user }}"
+    group: "{{ joomla_www_group }}"
+    mode: '766'
+
+- name: Set permissions for Joomla directory
+  ansible.legacy.file:
+    path: /var/www/sites/joomla
+    owner: "{{ joomla_www_user }}"
+    group: "{{ joomla_www_group }}"
+    recurse: true

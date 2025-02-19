@@ -1,0 +1,38 @@
+---
+- name: Install mysql packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+  - mysql-client
+  - mysql-common
+  - mysql-server
+
+- name: Ensure MySQL is running and enabled
+  ansible.builtin.service:
+    name: mysql
+    state: started
+    enabled: true
+
+- name: Set root password for MySQL
+  community.mysql.mysql_user:
+    name: root
+    password: "{{ mysql_root_password }}"
+    column_case_sensitive: true
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create MySQL user for Joomla
+  community.mysql.mysql_user:
+    name: admin
+    password: "{{ mysql_user_password }}"
+    priv: "*.*:ALL"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: Create database for Joomla
+  community.mysql.mysql_db:
+    name: joomla
+    state: present
+    login_user: admin
+    login_password: "{{ mysql_user_password }}"
